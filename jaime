@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# Define the output file
+output_file="/tmp/system_info.txt"
+
+# Check if the script is run with root privileges
+if [[ $EUID -ne 0 ]]; then
+    echo "Please run this script as root or using sudo."
+    exit 1
+fi
+
+# Function to gather and write system information to the output file
+gather_system_info() {
+    echo "System Information" > "$output_file"
+    echo "------------------" >> "$output_file"
+    echo "Hostname: $(hostname)" >> "$output_file"
+    echo "Operating System: $(lsb_release -d | cut -f2-)" >> "$output_file"
+    echo "Uptime: $(uptime -p)" >> "$output_file"
+    echo "Kernel Version: $(uname -r)" >> "$output_file"
+    echo "CPU Information: $(lscpu)" >> "$output_file"
+    echo "Memory Information:" >> "$output_file"
+    echo -e "Total: $(free -h | awk '/^Mem:/ {print $2}')\nFree: $(free -h | awk '/^Mem:/ {print $4}')" >> "$output_file"
+    echo -e "\nNetwork Information:" >> "$output_file"
+    echo "$(ip -o addr show)" >> "$output_file"
+    echo -e "\nFilesystem Utilization:" >> "$output_file"
+    echo "$(df -h)" >> "$output_file"
+    echo -e "\nLast 5 lines of log file with 'error':" >> "$output_file"
+    echo "$(grep -i error /var/log/syslog | tail -n 5)" >> "$output_file"
+}
+
+# Run the function
+gather_system_info
+
+echo "System information has been gathered and saved to $output_file."
