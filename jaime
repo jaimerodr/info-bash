@@ -24,11 +24,11 @@ gather_system_info() {
     echo "$(ip -o addr show)" >> "$output_file"
     echo -e "\nFilesystem Utilization:" >> "$output_file"
     echo "$(df -h)" >> "$output_file"
-    echo -e "\nLast 5 lines of log file with 'error':" >> "$output_file"
-    echo "$(grep -i error /var/log/syslog | tail -n 5)" >> "$output_file"
+    echo -e "\nLast 5 lines of log file with 'error':" >> "$output_file"      
+    echo "$(grep -i error /var/log/syslog | tail -n 5)" >> "$output_file"  
 }
 
 # Run the function
 gather_system_info
-
+    
 echo "System information has been gathered and saved to $output_file."
